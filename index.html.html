@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Inducción Laboral | Grupo Gestión - Aladdin</title>
+
+  <!-- Favicon (Ícono en la pestaña del navegador) -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffffff'/%3E%3Ccircle cx='32' cy='32' r='5.5' fill='%23808285'/%3E%3Cpath d='M35 11 L47 20 L35 29 V23.5 C27 23.5 22 27.5 20 34 L14 31 C17 21.5 25 16.5 35 16.5 Z' fill='%238CA832'/%3E%3Cpath d='M50 38 L41 50 L32 38 H37.5 C37.5 30 33.5 25 27 23 L30 17 C39.5 20 44.5 28 44.5 38 Z' fill='%23D99228'/%3E%3Cpath d='M15 43 L13 29 L26 33.5 L21.5 36.5 C25.5 43.5 32 45.5 38.5 43.5 L40.5 49.5 C31 52.5 21.5 48.5 17.5 40.5 Z' fill='%23808285'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="logo.png" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <!-- Font Awesome para iconografía limpia -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            gg: {
+              olive: '#A5B633',
+              oliveDark: '#879624',
+              oliveLight: '#F3F5E4',
+              cream: '#F9F9F2',
+              orange: '#F29339',
+              orangeDark: '#D97B22',
+              orangeLight: '#FEF4EA',
+              slate: '#374151',
+              dark: '#1F2937',
+            }
+          },
+          boxShadow: {
+            'soft': '0 10px 30px -5px rgba(135, 150, 36, 0.08)',
+            'phone': '0 25px 50px -12px rgba(31, 41, 55, 0.25)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Utilidades suaves para transiciones y ocultamiento de scrollbar en menú móvil */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.35s ease-out forwards;
+    }
+
+    /* Ajuste para input date en móviles iOS/Android */
+    input[type="date"] {
+      min-height: 48px;
+      -webkit-appearance: none;
+    }
+  </style>
+</head>
+
+<body class="bg-gg-cream text-gg-slate font-sans antialiased selection:bg-gg-olive selection:text-white overflow-x-hidden">
+
+  <!-- Notificación Toast Flotante Responsive -->
+  <div id="toast-container"
+    class="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-5 sm:right-5 z-50 flex flex-col items-center sm:items-end gap-2 pointer-events-none">
+  </div>
+
+  <!-- Barra Superior Institucional y Progreso Responsive -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200/80 shadow-sm">
+    <div class="max-w-6xl mx-auto px-3 sm:px-6">
+      <div class="flex items-center justify-between gap-2 min-h-[64px] py-2">
+        <!-- Marca Grupo Gestión (Logo en margen superior izquierdo adaptable) -->
+        <a href="#bienvenida" class="flex items-center gap-2 sm:gap-3 group min-w-0 shrink">
+          <img src="logo.png" alt="Grupo Gestión - Soluciones en Capital Humano"
+            class="h-8 xs:h-9 sm:h-11 w-auto max-w-[155px] sm:max-w-none object-contain transition-transform duration-200 group-hover:scale-[1.02]" />
+          <span class="hidden md:inline-block h-6 w-px bg-stone-200 mx-1"></span>
+          <span
+            class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gg-orangeLight text-gg-orangeDark border border-orange-200/70 whitespace-nowrap">
+            <i class="fa-solid fa-building"></i> Inducción Aladdin
+          </span>
+        </a>
+
+        <!-- Indicador de Progreso Global -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div class="text-right">
+            <span class="hidden sm:block text-[11px] font-semibold uppercase tracking-wider text-stone-500">Tu
+              progreso</span>
+            <span id="progress-text" class="text-xs sm:text-sm font-bold text-gg-oliveDark whitespace-nowrap">0 de
+              6</span>
+          </div>
+          <div class="w-16 sm:w-32 h-2 sm:h-2.5 bg-stone-200 rounded-full overflow-hidden">
+            <div id="progress-bar"
+              class="h-full bg-gradient-to-r from-gg-olive to-gg-orange transition-all duration-500 rounded-full"
+              style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Etiqueta móvil de destino + Navegación Rápida Horizontal -->
+      <div class="flex items-center gap-2 py-2 overflow-x-auto no-scrollbar border-t border-stone-100">
+        <span
+          class="md:hidden shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-gg-orangeLight text-gg-orangeDark border border-orange-200/70">
+          <i class="fa-solid fa-building"></i> Aladdin
+        </span>
+        <nav aria-label="Secciones de la guía" class="flex items-center gap-1.5">
+          <a href="#bienvenida"
+            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-hand-sparkles text-gg-orange"></i> Bienvenida
+          </a>
+          <a href="#haberes"
+            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-wallet text-gg-oliveDark"></i> Pago de Haberes
+          </a>
+          <a href="#ausencias"
+            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-calendar-check text-gg-orange"></i> Ausencias y Licencias
+          </a>
+          <a href="#obra-social"
+            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-heart-pulse text-gg-oliveDark"></i> Obra Social
+          </a>
+          <a href="#normas"
+            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-clipboard-check text-gg-orange"></i> Normas de Trabajo
+          </a>
+          <a href="#app-virtual"
+            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-mobile-screen-button text-gg-oliveDark"></i> App Gestión Virtual
+          </a>
+          <a href="#ayuda"
+            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-headset text-gg-orange"></i> Contacto y Quiz
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-12 space-y-8 sm:space-y-14">
+
+    <!-- 1. HERO DE BIENVENIDA -->
+    <section id="bienvenida" class="scroll-mt-32">
+      <div
+        class="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft p-5 sm:p-10 lg:p-12">
+        <!-- Decoración de fondo -->
+        <div
+          class="absolute -top-24 -right-24 w-56 sm:w-72 h-56 sm:h-72 rounded-full bg-gg-oliveLight/80 blur-2xl pointer-events-none">
+        </div>
+        <div
+          class="absolute -bottom-24 -left-24 w-56 sm:w-72 h-56 sm:h-72 rounded-full bg-gg-orangeLight/80 blur-2xl pointer-events-none">
+        </div>
+
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
+          <div class="lg:col-span-7 space-y-4 sm:space-y-5 min-w-0">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gg-oliveLight text-gg-oliveDark text-xs sm:text-sm font-semibold">
+              <span class="w-2 h-2 rounded-full bg-gg-olive animate-pulse shrink-0"></span>
+              <span>Guía de Inducción Laboral • Destino: Aladdin</span>
+            </div>
+
+            <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-gg-dark tracking-tight leading-tight">
+              ¡Te damos la bienvenida a <span class="text-gg-oliveDark">Grupo Gestión</span>!
+            </h1>
+
+            <p class="text-sm sm:text-lg text-stone-600 leading-relaxed">
+              Nos alegra contar con vos como parte de nuestro equipo. En esta oportunidad, vas a desempeñarte en <strong
+                class="text-gg-dark font-bold bg-gg-orangeLight px-2 py-0.5 rounded-md">Aladdin</strong>, por lo que es
+              importante que conozcas la información y las recomendaciones que te compartimos a continuación.
+            </p>
+
+            <p class="text-sm sm:text-base text-stone-600 leading-relaxed">
+              En este material interactivo encontrarás todo sobre el <strong>pago de tus haberes</strong>, las
+              <strong>ausencias</strong>, tu <strong>obra social</strong>, las <strong>normas de trabajo</strong> y el
+              uso de nuestra <strong>App Gestión Virtual</strong>. Te pedimos que lo leas con atención y lo tengas
+              presente para realizar tus tareas y gestiones.
+            </p>
+
+            <div class="pt-2 flex flex-col sm:flex-row gap-3">
+              <a href="#haberes"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gg-olive hover:bg-gg-oliveDark text-white font-semibold text-sm sm:text-base shadow-sm transition-all transform hover:-translate-y-0.5">
+                Comenzar recorrido <i class="fa-solid fa-arrow-down"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Checklist Interactivo de Onboarding -->
+          <div class="lg:col-span-5 min-w-0">
+            <div class="rounded-2xl bg-gg-cream border border-stone-200/90 p-4 sm:p-6">
+              <div class="flex items-center justify-between gap-2 mb-3 sm:mb-4">
+                <h2 class="font-bold text-gg-dark flex items-center gap-2 text-sm sm:text-lg">
+                  <i class="fa-solid fa-list-check text-gg-orange"></i> Checklist de Lectura
+                </h2>
+                <span id="badge-status"
+                  class="text-[11px] sm:text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 whitespace-nowrap">En
+                  curso</span>
+              </div>
+              <p class="text-xs text-stone-500 mb-3.5">Marcá cada sección a medida que la vayas leyendo para completar
+                tu inducción:</p>
+
+              <div class="space-y-2" id="checklist-items">
+                <!-- Generado / sincronizado dinámicamente -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. SECCIÓN 1: PAGO DE HABERES -->
+    <section id="haberes" class="scroll-mt-32">
+      <div class="rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden">
+        <!-- Cabecera de Sección -->
+        <div
+          class="bg-gg-oliveLight/70 px-4 sm:px-8 py-4 sm:py-5 border-b border-stone-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div class="flex items-center gap-3 sm:gap-3.5">
+            <div
+              class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gg-olive text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0">
+              <i class="fa-solid fa-money-check-dollar"></i>
+            </div>
+            <div>
+              <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gg-oliveDark">Módulo 01</span>
+              <h2 class="text-lg sm:text-2xl font-extrabold text-gg-dark">Pago de Haberes</h2>
+            </div>
+          </div>
+          <button type="button" data-module-btn="haberes"
+            class="module-toggle-btn w-full sm:w-auto justify-center px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold border border-stone-300 bg-white text-stone-700 hover:bg-gg-oliveLight transition-colors flex items-center gap-2 cursor-pointer">
+            <i class="fa-regular fa-circle"></i> <span>Marcar módulo leído</span>
+          </button>
+        </div>
+
+        <div class="p-4 sm:p-8 space-y-6 sm:space-y-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+            <!-- Columna izquierda: Información clave -->
+            <div class="lg:col-span-7 space-y-5 sm:space-y-6 min-w-0">
+              <!-- Tarjeta: ¿Cuándo y cómo cobrás tu sueldo? -->
+              <div class="rounded-2xl bg-gg-cream border border-stone-200/80 p-4 sm:p-6 space-y-4">
+                <h3 class="text-base sm:text-lg font-bold text-gg-orange flex items-start sm:items-center gap-2.5">
+                  <span
+                    class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gg-olive text-white inline-flex items-center justify-center text-xs shrink-0 mt-0.5 sm:mt-0">
+                    <i class="fa-solid fa-check"></i>
+                  </span>
+                  <span>¿Cuándo y cómo cobrás tu sueldo?</span>
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div class="bg-white p-4 rounded-xl border border-stone-200/70">
+                    <span class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 block mb-1">Frecuencia
+                      de pago</span>
+                    <p class="text-base font-bold text-gg-dark">Quincenal</p>
+                    <p class="text-xs sm:text-sm text-stone-600 mt-1">Se realiza el <strong class="text-gg-dark">4.º día
+                        hábil</strong> de cada quincena.</p>
+                  </div>
+                  <div class="bg-white p-4 rounded-xl border border-stone-200/70">
+                    <span class="text-[11px] font-semibold uppercase tracking-wide text-stone-400 block mb-1">Entidad
+                      Bancaria</span>
+                    <p class="text-base font-bold text-red-600 flex items-center gap-1.5">
+                      <i class="fa-solid fa-building-columns"></i> Banco Santander
+                    </p>
+                    <p class="text-xs sm:text-sm text-stone-600 mt-1">Caja de ahorro abierta a tu nombre por Grupo
+                      Gestión.</p>
+                  </div>
+                </div>
+
+                <p class="text-sm sm:text-base text-stone-700 leading-relaxed">
+                  Desde Grupo Gestión gestionaremos la apertura de una caja de ahorro a tu nombre en <strong>Banco
+                    Santander</strong>. Tu tarjeta de débito llegará a tu lugar de trabajo aproximadamente <strong>10
+                    días después de tu ingreso</strong>.
+                </p>
+              </div>
+
+              <!-- Tarjeta: ¿Qué pasa si todavía no recibiste tu tarjeta? -->
+              <div class="rounded-2xl bg-gg-orangeLight/60 border border-orange-200/80 p-4 sm:p-6 space-y-4">
+                <h3 class="text-base sm:text-lg font-bold text-gg-orange flex items-start sm:items-center gap-2.5">
+                  <span
+                    class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gg-olive text-white inline-flex items-center justify-center text-xs shrink-0 mt-0.5 sm:mt-0">
+                    <i class="fa-solid fa-check"></i>
+                  </span>
+                  <span>¿Qué pasa si todavía no recibiste tu tarjeta?</span>
+                </h3>
+
+                <p class="text-sm sm:text-base text-stone-700 leading-relaxed">
+                  Si llegó tu fecha de cobro y todavía no tenés la tarjeta, podés retirar tu dinero <strong>por
+                    ventanilla</strong> en cualquier sucursal de <strong>Banco Santander</strong>, presentando tu
+                  <strong>DNI</strong>.
+                </p>
+
+                <div
+                  class="bg-white rounded-xl p-4 border border-orange-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div class="space-y-1">
+                    <p class="text-sm font-bold text-gg-dark flex items-center gap-2">
+                      <i class="fa-solid fa-laptop text-red-600"></i> Alternativa Online Banking
+                    </p>
+                    <p class="text-xs sm:text-sm text-stone-600">
+                      También podés utilizar <strong>Online Banking</strong> para consultar tus movimientos y realizar
+                      extracciones sin tarjeta.
+                    </p>
+                  </div>
+                  <a href="https://ayuda.santander.com.ar/" target="_blank" rel="noopener noreferrer"
+                    class="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold transition-colors shadow-sm">
+                    Crear usuario y clave <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Columna derecha: Simulador Interactivo de Fecha de Tarjeta y Cobro -->
+            <div class="lg:col-span-5 min-w-0">
+              <div
+                class="h-full rounded-2xl bg-gradient-to-b from-gg-oliveLight to-white border-2 border-gg-olive/40 p-4 sm:p-6 flex flex-col justify-between space-y-5">
+                <div class="space-y-4">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gg-orange text-white flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gg-dark text-base sm:text-lg">Simulador de Ingreso y Tarjeta</h3>
+                      <p class="text-xs text-stone-500">Calculá cuándo llega tu tarjeta Santander</p>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label for="fecha-ingreso" class="block text-xs sm:text-sm font-semibold text-gg-dark">
+                      Seleccioná tu fecha de ingreso a Aladdin:
+                    </label>
+                    <input type="date" id="fecha-ingreso"
+                      class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border border-stone-300 bg-white text-gg-dark text-sm sm:text-base font-medium focus:outline-none focus:ring-2 focus:ring-gg-olive focus:border-gg-olive" />
+                  </div>
+
+                  <!-- Resultado dinámico del simulador -->
+                  <div id="simulador-resultado" class="space-y-3 pt-1">
+                    <div class="p-3.5 sm:p-4 rounded-xl bg-white border border-stone-200 shadow-sm space-y-1.5">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-gg-oliveDark">Activación App
+                          Gestión Virtual</span>
+                        <span
+                          class="text-[11px] font-semibold px-2 py-0.5 rounded bg-gg-oliveLight text-gg-oliveDark shrink-0">+48
+                          hs</span>
+                      </div>
+                      <p id="res-app-date" class="text-sm font-bold text-gg-dark capitalize">Seleccioná una fecha arriba
+                      </p>
+                      <p class="text-xs text-stone-500">Recibirás un mail para validar tu cuenta y crear contraseña.</p>
+                    </div>
+
+                    <div class="p-3.5 sm:p-4 rounded-xl bg-white border border-orange-200 shadow-sm space-y-1.5">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-gg-orangeDark">Llegada estimada
+                          de tarjeta</span>
+                        <span
+                          class="text-[11px] font-semibold px-2 py-0.5 rounded bg-gg-orangeLight text-gg-orangeDark shrink-0">~10
+                          días</span>
+                      </div>
+                      <p id="res-card-date" class="text-sm sm:text-base font-extrabold text-gg-dark capitalize">
+                        Seleccioná una fecha arriba</p>
+                      <p class="text-xs text-stone-600">Se envía directamente a tu lugar de trabajo
+                        (<strong>Aladdin</strong>).</p>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200/80 flex items-start gap-2.5">
+                      <i class="fa-solid fa-circle-info text-gg-orange mt-0.5 shrink-0"></i>
+                      <p class="text-xs text-stone-700 leading-relaxed">
+                        <strong>Recordatorio de cobro:</strong> Tu sueldo se acredita de forma <strong>quincenal el 4.º
+                          día hábil</strong> de cada quincena. Si aún no llegó tu tarjeta para esa fecha, cobrás por
+                        ventanilla con tu DNI o por Online Banking.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SECCIÓN 2: AUSENCIAS Y LICENCIAS -->
+    <section id="ausencias" class="scroll-mt-32">
+      <div class="rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden">
+        <div
+          class="bg-gg-orangeLight/70 px-4 sm:px-8 py-4 sm:py-5 border-b border-stone-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div class="flex items-center gap-3 sm:gap-3.5">
+            <div
+              class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gg-orange text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0">
+              <i class="fa-solid fa-user-clock"></i>
+            </div>
+            <div>
+              <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gg-orangeDark">Módulo
+                02</span>
+              <h2 class="text-lg sm:text-2xl font-extrabold text-gg-dark">Ausencias y Licencias</h2>
+            </div>
+          </div>
+          <button type="button" data-module-btn="ausencias"
+            class="module-toggle-btn w-full sm:w-auto justify-center px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold border border-stone-300 bg-white text-stone-700 hover:bg-gg-oliveLight transition-colors flex items-center gap-2 cursor-pointer">
+            <i class="fa-regular fa-circle"></i> <span>Marcar módulo leído</span>
+          </button>
+        </div>
+
+        <div class="p-4 sm:p-8 space-y-5 sm:space-y-6">
+          <div class="max-w-3xl">
+            <h3 class="text-base sm:text-xl font-bold text-gg-dark mb-1.5">¿Qué tenés que hacer si no podés asistir a
+              trabajar?</h3>
+            <p class="text-sm sm:text-base text-stone-600">
+              Elegí el motivo de tu ausencia en la guía interactiva para conocer exactamente los pasos obligatorios que
+              debés seguir:
+            </p>
+          </div>
+
+          <!-- Selector interactivo de motivo de ausencia -->
+          <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
+            <button type="button" id="btn-motivo-enfermedad" onclick="selectAusencia('enfermedad')"
+              class="w-full sm:w-auto justify-center px-5 py-3.5 sm:py-3 rounded-2xl font-semibold text-sm flex items-center gap-2.5 bg-gg-olive text-white shadow-sm transition-all cursor-pointer">
+              <i class="fa-solid fa-notes-medical"></i> Ausencia por Enfermedad
+            </button>
+            <button type="button" id="btn-motivo-otro" onclick="selectAusencia('otro')"
+              class="w-full sm:w-auto justify-center px-5 py-3.5 sm:py-3 rounded-2xl font-semibold text-sm flex items-center gap-2.5 bg-stone-100 text-stone-700 hover:bg-stone-200 transition-all cursor-pointer">
+              <i class="fa-solid fa-calendar-xmark"></i> Otro motivo de ausencia
+            </button>
+          </div>
+
+          <!-- Contenido dinámico del flujo paso a paso -->
+          <div id="ausencia-flow-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 pt-1">
+            <!-- Renderizado por JS -->
+          </div>
+
+          <!-- Recordatorio destacado -->
+          <div class="rounded-2xl bg-gg-cream border-l-4 border-gg-orange p-4 sm:p-5 flex items-start gap-3">
+            <div
+              class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gg-orangeLight text-gg-orangeDark flex items-center justify-center shrink-0 mt-0.5">
+              <i class="fa-solid fa-bell"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-gg-dark text-sm sm:text-base">Recordá:</h4>
+              <p class="text-xs sm:text-sm text-stone-700 mt-0.5 leading-relaxed">
+                Es importante que <strong>informes cualquier ausencia a tiempo</strong> (ese mismo día) y
+                <strong>presentes la documentación correspondiente</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. SECCIÓN 3: OBRA SOCIAL + SECCIÓN 4: NORMAS DE TRABAJO -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+      <!-- Obra Social (5 cols) -->
+      <section id="obra-social" class="lg:col-span-5 scroll-mt-32 flex flex-col min-w-0">
+        <div
+          class="flex-1 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden flex flex-col">
+          <div
+            class="bg-gg-oliveLight/70 px-4 sm:px-6 py-4 sm:py-5 border-b border-stone-200/70 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gg-olive text-white flex items-center justify-center text-base sm:text-lg shadow-sm shrink-0">
+                <i class="fa-solid fa-heart-pulse"></i>
+              </div>
+              <div>
+                <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gg-oliveDark">Módulo
+                  03</span>
+                <h2 class="text-lg sm:text-xl font-extrabold text-gg-dark">Obra Social</h2>
+              </div>
+            </div>
+            <button type="button" data-module-btn="obra-social"
+              class="module-toggle-btn p-2.5 rounded-xl text-xs font-semibold border border-stone-300 bg-white text-stone-700 hover:bg-gg-oliveLight transition-colors shrink-0 cursor-pointer"
+              title="Marcar módulo leído">
+              <i class="fa-regular fa-circle text-base"></i>
+            </button>
+          </div>
+
+          <div class="p-4 sm:p-6 flex-1 flex flex-col justify-between space-y-5 sm:space-y-6">
+            <div class="space-y-4">
+              <h3 class="text-sm sm:text-base font-bold text-gg-orange">¿Qué obra social te corresponde?</h3>
+
+              <div class="p-4 sm:p-5 rounded-2xl bg-gg-cream border border-stone-200/90 space-y-2">
+                <span
+                  class="inline-block px-2.5 py-1 rounded-md bg-gg-olive text-white text-xs font-bold tracking-wider">UOM</span>
+                <p class="text-base sm:text-lg font-extrabold text-gg-dark leading-snug">
+                  Obra Social de la Unión Obrera Metalúrgica de la República Argentina (UOM)
+                </p>
+              </div>
+
+              <div class="space-y-2.5 pt-1">
+                <h4 class="text-sm font-bold text-gg-dark flex items-center gap-2">
+                  <i class="fa-solid fa-route text-gg-oliveDark"></i> ¿Cómo gestionar tu afiliación?
+                </h4>
+                <div
+                  class="flex items-start gap-3 p-3.5 sm:p-4 rounded-xl bg-gg-orangeLight/50 border border-orange-200/70">
+                  <div
+                    class="w-7 h-7 rounded-full bg-gg-orange text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                    1</div>
+                  <p class="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                    Para gestionar tu afiliación, deberás realizar el trámite <strong>personalmente en una sede del
+                      sindicato</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-1">
+              <button type="button" data-module-btn="obra-social"
+                class="module-toggle-btn w-full py-3 sm:py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold border border-stone-300 bg-white text-stone-700 hover:bg-gg-oliveLight transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                <i class="fa-regular fa-circle"></i> <span>Marcar Obra Social como leída</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Normas y Recomendaciones (7 cols) -->
+      <section id="normas" class="lg:col-span-7 scroll-mt-32 flex flex-col min-w-0">
+        <div
+          class="flex-1 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden flex flex-col">
+          <div
+            class="bg-gg-orangeLight/70 px-4 sm:px-6 py-4 sm:py-5 border-b border-stone-200/70 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gg-orange text-white flex items-center justify-center text-base sm:text-lg shadow-sm shrink-0">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <div>
+                <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gg-orangeDark">Módulo
+                  04</span>
+                <h2 class="text-lg sm:text-xl font-extrabold text-gg-dark">Normas y Recomendaciones</h2>
+              </div>
+            </div>
+            <button type="button" data-module-btn="normas"
+              class="module-toggle-btn px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold border border-stone-300 bg-white text-stone-700 hover:bg-gg-oliveLight transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer">
+              <i class="fa-regular fa-circle"></i> <span class="hidden sm:inline">Marcar leído</span>
+            </button>
+          </div>
+
+          <div class="p-4 sm:p-6 flex-1 flex flex-col justify-between space-y-4 sm:space-y-5">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+              Durante tu jornada laboral en <strong>Aladdin</strong>, es importante que conozcas y respetes estas pautas
+              para un entorno seguro, organizado y respetuoso. <strong>Tocá cada norma para confirmarla:</strong>
+            </p>
+
+            <div class="space-y-3" id="normas-checklist">
+              <!-- Norma 1 -->
+              <div role="checkbox" aria-checked="false" tabindex="0" data-norma-idx="0"
+                class="norma-card flex items-start gap-3 sm:gap-3.5 p-3.5 sm:p-4 rounded-2xl border border-stone-200 bg-gg-cream hover:border-gg-olive cursor-pointer transition-all select-none">
+                <span
+                  class="norma-box mt-0.5 w-6 h-6 rounded-lg border-2 border-stone-300 bg-white flex items-center justify-center text-white text-xs shrink-0 transition-colors">
+                  <i class="fa-solid fa-check opacity-0 transition-opacity"></i>
+                </span>
+                <div class="space-y-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-bold text-gg-dark text-sm sm:text-base">Registro de salida</span>
+                    <span
+                      class="text-[10px] sm:text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-red-100 text-red-700">Obligatorio</span>
+                  </div>
+                  <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                    Recordá registrar siempre tu salida al finalizar cada turno. Este procedimiento es obligatorio.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Norma 2 -->
+              <div role="checkbox" aria-checked="false" tabindex="0" data-norma-idx="1"
+                class="norma-card flex items-start gap-3 sm:gap-3.5 p-3.5 sm:p-4 rounded-2xl border border-stone-200 bg-gg-cream hover:border-gg-olive cursor-pointer transition-all select-none">
+                <span
+                  class="norma-box mt-0.5 w-6 h-6 rounded-lg border-2 border-stone-300 bg-white flex items-center justify-center text-white text-xs shrink-0 transition-colors">
+                  <i class="fa-solid fa-check opacity-0 transition-opacity"></i>
+                </span>
+                <div class="space-y-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-bold text-gg-dark text-sm sm:text-base">Control de pertenencias</span>
+                    <span
+                      class="text-[10px] sm:text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-gg-orangeLight text-gg-orangeDark">Seguridad</span>
+                  </div>
+                  <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                    Al retirarte de tu lugar de trabajo, deberás presentar tus bolsos y mochilas al personal de
+                    seguridad para su control.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Norma 3 -->
+              <div role="checkbox" aria-checked="false" tabindex="0" data-norma-idx="2"
+                class="norma-card flex items-start gap-3 sm:gap-3.5 p-3.5 sm:p-4 rounded-2xl border border-stone-200 bg-gg-cream hover:border-gg-olive cursor-pointer transition-all select-none">
+                <span
+                  class="norma-box mt-0.5 w-6 h-6 rounded-lg border-2 border-stone-300 bg-white flex items-center justify-center text-white text-xs shrink-0 transition-colors">
+                  <i class="fa-solid fa-check opacity-0 transition-opacity"></i>
+                </span>
+                <div class="space-y-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-bold text-gg-dark text-sm sm:text-base">Normas de convivencia</span>
+                    <span
+                      class="text-[10px] sm:text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-gg-oliveLight text-gg-oliveDark">Equipo</span>
+                  </div>
+                  <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                    Respetá las normas de convivencia y seguí las indicaciones de tus responsables durante la jornada
+                    laboral.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1 text-xs text-stone-500">
+              <span id="normas-counter" class="font-semibold text-gg-oliveDark">0 de 3 pautas confirmadas</span>
+              <span>Clave para la convivencia diaria</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 5. SECCIÓN 5: APP GESTIÓN VIRTUAL -->
+    <section id="app-virtual" class="scroll-mt-32">
+      <div class="rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden">
+        <div
+          class="bg-gg-oliveLight/70 px-4 sm:px-8 py-4 sm:py-5 border-b border-stone-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div class="flex items-center gap-3 sm:gap-3.5">
+            <div
+              class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gg-olive text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+            </div>
+            <div>
+              <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gg-oliveDark">Módulo 05</span>
+              <h2 class="text-lg sm:text-2xl font-extrabold text-gg-dark">App Gestión Virtual</h2>
+            </div>
+          </div>
+          <button type="button" data-module-btn="app-virtual"
+            class="module-toggle-btn w-full sm:w-auto justify-center px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold border border-stone-300 bg-white text-stone-700 hover:bg-gg-oliveLight transition-colors flex items-center gap-2 cursor-pointer">
+            <i class="fa-regular fa-circle"></i> <span>Marcar módulo leído</span>
+          </button>
+        </div>
+
+        <div class="p-4 sm:p-8 lg:p-10">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            <!-- Columna izquierda: Guía de activación y funcionalidades -->
+            <div class="lg:col-span-7 space-y-5 sm:space-y-6 min-w-0">
+              <div>
+                <span
+                  class="inline-block px-3 py-1 rounded-full bg-gg-orangeLight text-gg-orangeDark text-xs font-bold mb-2">
+                  ¡Tus consultas y gestiones, en un solo lugar!
+                </span>
+                <h3 class="text-xl sm:text-2xl font-extrabold text-gg-dark">Tu herramienta laboral digital</h3>
+                <p class="text-sm sm:text-base text-stone-600 mt-2 leading-relaxed">
+                  En Grupo Gestión contamos con nuestra <strong>App Gestión Virtual</strong>, una herramienta que te
+                  permite acceder a información importante y realizar tus gestiones de manera rápida y simple.
+                </p>
+              </div>
+
+              <!-- Activación 48 hs -->
+              <div class="rounded-2xl bg-gg-cream border border-stone-200/90 p-4 sm:p-5 space-y-3">
+                <h4 class="font-bold text-gg-orange flex items-center gap-2 text-sm sm:text-base">
+                  <i class="fa-solid fa-clock"></i> ¿Cuándo podés comenzar a utilizarla?
+                </h4>
+                <ul class="space-y-2.5 text-xs sm:text-sm text-stone-700">
+                  <li class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-gg-oliveDark mt-0.5 shrink-0"></i>
+                    <span>Podrás acceder a la aplicación a partir de las <strong>48 horas</strong> de tu primer día de
+                      trabajo.</span>
+                  </li>
+                  <li class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-envelope-open-text text-gg-oliveDark mt-0.5 shrink-0"></i>
+                    <span>Recibirás un <strong>correo electrónico</strong> para validar tu cuenta y crear tu
+                      contraseña.</span>
+                  </li>
+                  <li class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-user-check text-gg-oliveDark mt-0.5 shrink-0"></i>
+                    <span>Tu <strong>usuario</strong> será tu dirección de correo electrónico.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Lista de funcionalidades -->
+              <div class="space-y-3">
+                <h4 class="font-bold text-gg-dark text-sm sm:text-base">¿Qué podés hacer desde la App?</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-gg-oliveLight/50 border border-gg-olive/20">
+                    <i class="fa-solid fa-square-check text-gg-oliveDark text-lg shrink-0"></i>
+                    <span class="text-xs sm:text-sm font-medium text-gg-dark">Consultar tus fechas de cobro</span>
+                  </div>
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-gg-oliveLight/50 border border-gg-olive/20">
+                    <i class="fa-solid fa-square-check text-gg-oliveDark text-lg shrink-0"></i>
+                    <span class="text-xs sm:text-sm font-medium text-gg-dark">Visualizar tus recibos de sueldo</span>
+                  </div>
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-gg-oliveLight/50 border border-gg-olive/20">
+                    <i class="fa-solid fa-square-check text-gg-oliveDark text-lg shrink-0"></i>
+                    <span class="text-xs sm:text-sm font-medium text-gg-dark">Realizar consultas y gestiones</span>
+                  </div>
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-gg-oliveLight/50 border border-gg-olive/20">
+                    <i class="fa-solid fa-square-check text-gg-oliveDark text-lg shrink-0"></i>
+                    <span class="text-xs sm:text-sm font-medium text-gg-dark">Acceder a información laboral</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Aviso Importante: Firma mensual de recibos -->
+              <div class="rounded-2xl bg-amber-50 border-2 border-gg-orange p-4 sm:p-5 flex items-start gap-3.5 sm:gap-4">
+                <div
+                  class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gg-orange text-white flex items-center justify-center shrink-0 text-base sm:text-lg">
+                  <i class="fa-solid fa-file-signature"></i>
+                </div>
+                <div>
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-gg-orangeDark">¡Importante!</span>
+                  <p class="text-xs sm:text-base font-semibold text-gg-dark mt-0.5 leading-relaxed">
+                    Recordá que <span class="underline decoration-gg-orange decoration-2">todos los meses deberás firmar
+                      tus recibos de sueldo</span>, ya sea en conformidad o disconformidad.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Botón de Descarga Oficial -->
+              <div class="pt-1">
+                <a href="https://docs.grupo-gestion.com.ar/docs/DESCARGALAAPPGV_interactivo.pdf" target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center justify-center gap-2.5 sm:gap-3 w-full sm:w-auto px-5 sm:px-6 py-4 rounded-2xl bg-gg-orange hover:bg-gg-orangeDark text-white font-bold text-sm sm:text-base shadow-md transition-all transform hover:-translate-y-0.5 text-center">
+                  <i class="fa-solid fa-download text-base sm:text-lg shrink-0"></i>
+                  <span>Descargar instructivo App Gestión Virtual</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-80 shrink-0"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Columna derecha: Mockup Interactivo del Teléfono -->
+            <div class="lg:col-span-5 flex flex-col items-center min-w-0">
+              <p class="text-xs font-semibold uppercase tracking-wider text-stone-400 mb-3 flex items-center gap-1.5">
+                <i class="fa-solid fa-hand-pointer text-gg-orange"></i> Probá la vista previa interactiva
+              </p>
+
+              <!-- Carcasa del Celular Responsive -->
+              <div
+                class="w-full max-w-[295px] sm:max-w-[310px] rounded-[2.25rem] sm:rounded-[2.5rem] bg-stone-900 p-2.5 sm:p-3 shadow-phone border-4 border-stone-800">
+                <div class="bg-stone-50 rounded-[1.85rem] sm:rounded-[2rem] overflow-hidden flex flex-col">
+                  <!-- Notch / Barra superior -->
+                  <div class="bg-gg-olive px-4 sm:px-5 pt-3.5 sm:pt-4 pb-5 text-white">
+                    <div class="flex items-center justify-between text-[10px] opacity-85 mb-3">
+                      <span>9:41</span>
+                      <div class="w-14 sm:w-16 h-3.5 bg-stone-900/30 rounded-full"></div>
+                      <div class="flex items-center gap-1">
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-battery-full"></i>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-xs opacity-90">Hola,</p>
+                        <p class="text-sm font-bold">Colaborador Aladdin</p>
+                      </div>
+                      <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                        <i class="fa-solid fa-bell text-xs"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tarjeta flotante ¿Cuándo cobro? -->
+                  <div class="px-3.5 sm:px-4 -mt-3">
+                    <div class="bg-white rounded-2xl p-3 sm:p-3.5 shadow-sm border border-stone-200/80 text-center">
+                      <span class="text-[11px] font-bold uppercase tracking-wider text-gg-oliveDark">¿Cuándo
+                        cobro?</span>
+                      <p class="text-sm sm:text-base font-extrabold text-gg-dark mt-0.5">4.º día hábil quincenal</p>
+                      <p
+                        class="text-[11px] text-gg-orangeDark font-semibold mt-1 bg-gg-orangeLight py-1 px-2 rounded-lg">
+                        Hora de acreditación hasta: 22 hs.
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Grid de iconos interactivos de la App -->
+                  <div class="p-3.5 sm:p-4 space-y-3">
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                      <button type="button" onclick="previewAppTab('consultas')"
+                        class="app-icon-btn p-2 sm:p-2.5 rounded-xl bg-white border border-stone-200 hover:border-gg-olive flex flex-col items-center gap-1 transition-all cursor-pointer">
+                        <div
+                          class="w-8 h-8 rounded-lg bg-gg-oliveLight text-gg-oliveDark flex items-center justify-center text-sm">
+                          <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <span class="text-[10px] font-semibold text-stone-700">Consultas</span>
+                      </button>
+
+                      <button type="button" onclick="previewAppTab('recibos')"
+                        class="app-icon-btn p-2 sm:p-2.5 rounded-xl bg-gg-orangeLight/70 border border-gg-orange flex flex-col items-center gap-1 transition-all cursor-pointer">
+                        <div
+                          class="w-8 h-8 rounded-lg bg-gg-orange text-white flex items-center justify-center text-sm">
+                          <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gg-dark">Recibos</span>
+                      </button>
+
+                      <button type="button" onclick="previewAppTab('ausentismo')"
+                        class="app-icon-btn p-2 sm:p-2.5 rounded-xl bg-white border border-stone-200 hover:border-gg-olive flex flex-col items-center gap-1 transition-all cursor-pointer">
+                        <div
+                          class="w-8 h-8 rounded-lg bg-gg-oliveLight text-gg-oliveDark flex items-center justify-center text-sm">
+                          <i class="fa-solid fa-calendar-minus"></i>
+                        </div>
+                        <span class="text-[10px] font-semibold text-stone-700">Ausentismo</span>
+                      </button>
+
+                      <button type="button" onclick="previewAppTab('induccion')"
+                        class="app-icon-btn p-2 sm:p-2.5 rounded-xl bg-white border border-stone-200 hover:border-gg-olive flex flex-col items-center gap-1 transition-all cursor-pointer">
+                        <div
+                          class="w-8 h-8 rounded-lg bg-gg-oliveLight text-gg-oliveDark flex items-center justify-center text-sm">
+                          <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <span class="text-[10px] font-semibold text-stone-700">Inducción</span>
+                      </button>
+
+                      <button type="button" onclick="previewAppTab('notificaciones')"
+                        class="app-icon-btn p-2 sm:p-2.5 rounded-xl bg-white border border-stone-200 hover:border-gg-olive flex flex-col items-center gap-1 transition-all col-span-2 cursor-pointer">
+                        <div
+                          class="w-8 h-8 rounded-lg bg-gg-oliveLight text-gg-oliveDark flex items-center
