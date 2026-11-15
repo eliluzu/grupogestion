@@ -50,7 +50,6 @@
     }
   </script>
   <style>
-    /* Utilidades suaves para transiciones y ocultamiento de scrollbar en menú móvil */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -63,7 +62,7 @@
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(8px);
+        transform: translateY(4px);
       }
 
       to {
@@ -73,10 +72,9 @@
     }
 
     .animate-fade-in {
-      animation: fadeIn 0.35s ease-out forwards;
+      animation: fadeIn 0.25s ease-out forwards;
     }
 
-    /* Ajuste para input date en móviles iOS/Android */
     input[type="date"] {
       min-height: 48px;
       -webkit-appearance: none;
@@ -92,14 +90,14 @@
     class="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-5 sm:right-5 z-50 flex flex-col items-center sm:items-end gap-2 pointer-events-none">
   </div>
 
-  <!-- Barra Superior Institucional y Progreso Responsive -->
+  <!-- Barra Superior Institucional y Menú de Navegación Responsive -->
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200/80 shadow-sm">
     <div class="max-w-6xl mx-auto px-3 sm:px-6">
       <div class="flex items-center justify-between gap-2 min-h-[64px] py-2">
         <!-- Marca Grupo Gestión (Logo en margen superior izquierdo adaptable) -->
-        <a href="#bienvenida" class="flex items-center gap-2 sm:gap-3 group min-w-0 shrink">
+        <a href="#haberes" class="flex items-center gap-2 sm:gap-3 group min-w-0 shrink">
           <img src="logo.png" alt="Grupo Gestión - Soluciones en Capital Humano"
-            class="h-8 xs:h-9 sm:h-11 w-auto max-w-[155px] sm:max-w-none object-contain transition-transform duration-200 group-hover:scale-[1.02]" />
+            class="h-8 sm:h-11 w-auto max-w-[140px] sm:max-w-none object-contain transition-transform duration-200 group-hover:scale-[1.02]" />
           <span class="hidden md:inline-block h-6 w-px bg-stone-200 mx-1"></span>
           <span
             class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gg-orangeLight text-gg-orangeDark border border-orange-200/70 whitespace-nowrap">
@@ -107,56 +105,127 @@
           </span>
         </a>
 
-        <!-- Indicador de Progreso Global -->
-        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-          <div class="text-right">
-            <span class="hidden sm:block text-[11px] font-semibold uppercase tracking-wider text-stone-500">Tu
-              progreso</span>
-            <span id="progress-text" class="text-xs sm:text-sm font-bold text-gg-oliveDark whitespace-nowrap">0 de
-              6</span>
+        <!-- Controles Derechos: Progreso + Botón Menú Móvil -->
+        <div class="flex items-center gap-2.5 sm:gap-4 shrink-0">
+          <!-- Indicador de Progreso Global -->
+          <div class="flex items-center gap-2 sm:gap-3">
+            <div class="text-right">
+              <span class="hidden sm:block text-[11px] font-semibold uppercase tracking-wider text-stone-500">Tu
+                progreso</span>
+              <span id="progress-text" class="text-xs sm:text-sm font-bold text-gg-oliveDark whitespace-nowrap">0 de
+                5</span>
+            </div>
+            <div class="w-14 sm:w-32 h-2 sm:h-2.5 bg-stone-200 rounded-full overflow-hidden">
+              <div id="progress-bar"
+                class="h-full bg-gradient-to-r from-gg-olive to-gg-orange transition-all duration-500 rounded-full"
+                style="width: 0%"></div>
+            </div>
           </div>
-          <div class="w-16 sm:w-32 h-2 sm:h-2.5 bg-stone-200 rounded-full overflow-hidden">
-            <div id="progress-bar"
-              class="h-full bg-gradient-to-r from-gg-olive to-gg-orange transition-all duration-500 rounded-full"
-              style="width: 0%"></div>
-          </div>
+
+          <!-- Botón Hamburguesa -->
+          <button type="button" id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-nav-drawer"
+            aria-label="Abrir menú de navegación"
+            class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl border border-stone-200 bg-gg-cream text-gg-dark hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors cursor-pointer">
+            <i id="mobile-menu-icon" class="fa-solid fa-bars text-base"></i>
+          </button>
         </div>
       </div>
 
-      <!-- Etiqueta móvil de destino + Navegación Rápida Horizontal -->
-      <div class="flex items-center gap-2 py-2 overflow-x-auto no-scrollbar border-t border-stone-100">
-        <span
-          class="md:hidden shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-gg-orangeLight text-gg-orangeDark border border-orange-200/70">
-          <i class="fa-solid fa-building"></i> Aladdin
-        </span>
-        <nav aria-label="Secciones de la guía" class="flex items-center gap-1.5">
-          <a href="#bienvenida"
-            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
-            <i class="fa-solid fa-hand-sparkles text-gg-orange"></i> Bienvenida
+      <!-- Navegación Desktop / Tablet (>= md) -->
+      <nav aria-label="Secciones de la guía"
+        class="hidden md:flex items-center flex-wrap gap-1.5 py-2.5 border-t border-stone-100">
+        <a href="#haberes" data-nav-target="haberes"
+          class="nav-link px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-wallet text-gg-oliveDark"></i> Pago de Haberes
+        </a>
+        <a href="#ausencias" data-nav-target="ausencias"
+          class="nav-link px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-calendar-check text-gg-orange"></i> Ausencias y Licencias
+        </a>
+        <a href="#obra-social" data-nav-target="obra-social"
+          class="nav-link px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-heart-pulse text-gg-oliveDark"></i> Obra Social
+        </a>
+        <a href="#normas" data-nav-target="normas"
+          class="nav-link px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-clipboard-check text-gg-orange"></i> Normas de Trabajo
+        </a>
+        <a href="#app-virtual" data-nav-target="app-virtual"
+          class="nav-link px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-mobile-screen-button text-gg-oliveDark"></i> App Gestión Virtual
+        </a>
+        <a href="#ayuda" data-nav-target="ayuda"
+          class="nav-link px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-headset text-gg-orange"></i> Contacto y Quiz
+        </a>
+      </nav>
+    </div>
+
+    <!-- Menú Desplegable Móvil (< md) - Corregido y desplegable -->
+    <div id="mobile-nav-drawer" style="display: none;"
+      class="md:hidden border-t border-stone-200 bg-white shadow-xl animate-fade-in">
+      <div class="px-4 py-3 space-y-2 max-h-[80vh] overflow-y-auto">
+        <div class="flex items-center justify-between pb-2 border-b border-stone-100">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Navegación rápida</span>
+          <span
+            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-gg-orangeLight text-gg-orangeDark border border-orange-200/70">
+            <i class="fa-solid fa-building"></i> Aladdin
+          </span>
+        </div>
+
+        <nav aria-label="Menú móvil de secciones" class="flex flex-col gap-1.5 py-1">
+          <a href="#haberes" data-nav-target="haberes"
+            class="mobile-nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-stone-700 bg-stone-50 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors">
+            <span
+              class="w-8 h-8 rounded-lg bg-gg-oliveLight text-gg-oliveDark flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-wallet"></i>
+            </span>
+            <span>Pago de Haberes</span>
           </a>
-          <a href="#haberes"
-            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
-            <i class="fa-solid fa-wallet text-gg-oliveDark"></i> Pago de Haberes
+
+          <a href="#ausencias" data-nav-target="ausencias"
+            class="mobile-nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-stone-700 bg-stone-50 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors">
+            <span
+              class="w-8 h-8 rounded-lg bg-gg-orangeLight text-gg-orange flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-calendar-check"></i>
+            </span>
+            <span>Ausencias y Licencias</span>
           </a>
-          <a href="#ausencias"
-            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
-            <i class="fa-solid fa-calendar-check text-gg-orange"></i> Ausencias y Licencias
+
+          <a href="#obra-social" data-nav-target="obra-social"
+            class="mobile-nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-stone-700 bg-stone-50 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors">
+            <span
+              class="w-8 h-8 rounded-lg bg-gg-oliveLight text-gg-oliveDark flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-heart-pulse"></i>
+            </span>
+            <span>Obra Social (UOM)</span>
           </a>
-          <a href="#obra-social"
-            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
-            <i class="fa-solid fa-heart-pulse text-gg-oliveDark"></i> Obra Social
+
+          <a href="#normas" data-nav-target="normas"
+            class="mobile-nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-stone-700 bg-stone-50 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors">
+            <span
+              class="w-8 h-8 rounded-lg bg-gg-orangeLight text-gg-orange flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-clipboard-check"></i>
+            </span>
+            <span>Normas de Trabajo</span>
           </a>
-          <a href="#normas"
-            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
-            <i class="fa-solid fa-clipboard-check text-gg-orange"></i> Normas de Trabajo
+
+          <a href="#app-virtual" data-nav-target="app-virtual"
+            class="mobile-nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-stone-700 bg-stone-50 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors">
+            <span
+              class="w-8 h-8 rounded-lg bg-gg-oliveLight text-gg-oliveDark flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+            </span>
+            <span>App Gestión Virtual</span>
           </a>
-          <a href="#app-virtual"
-            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
-            <i class="fa-solid fa-mobile-screen-button text-gg-oliveDark"></i> App Gestión Virtual
-          </a>
-          <a href="#ayuda"
-            class="nav-pill shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-stone-600 hover:bg-gg-oliveLight hover:text-gg-oliveDark active:bg-gg-oliveLight transition-colors flex items-center gap-1.5">
-            <i class="fa-solid fa-headset text-gg-orange"></i> Contacto
+
+          <a href="#ayuda" data-nav-target="ayuda"
+            class="mobile-nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-stone-700 bg-stone-50 hover:bg-gg-oliveLight hover:text-gg-oliveDark transition-colors">
+            <span
+              class="w-8 h-8 rounded-lg bg-gg-orangeLight text-gg-orange flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-headset"></i>
+            </span>
+            <span>Contacto y Quiz de Verificación</span>
           </a>
         </nav>
       </div>
@@ -166,10 +235,9 @@
   <main class="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-12 space-y-8 sm:space-y-14">
 
     <!-- 1. HERO DE BIENVENIDA -->
-    <section id="bienvenida" class="scroll-mt-32">
+    <section id="bienvenida" class="scroll-mt-24 md:scroll-mt-32">
       <div
         class="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft p-5 sm:p-10 lg:p-12">
-        <!-- Decoración de fondo -->
         <div
           class="absolute -top-24 -right-24 w-56 sm:w-72 h-56 sm:h-72 rounded-full bg-gg-oliveLight/80 blur-2xl pointer-events-none">
         </div>
@@ -201,13 +269,6 @@
               uso de nuestra <strong>App Gestión Virtual</strong>. Te pedimos que lo leas con atención y lo tengas
               presente para realizar tus tareas y gestiones.
             </p>
-
-            <div class="pt-2 flex flex-col sm:flex-row gap-3">
-              <a href="#haberes"
-                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gg-olive hover:bg-gg-oliveDark text-white font-semibold text-sm sm:text-base shadow-sm transition-all transform hover:-translate-y-0.5">
-                Comenzar recorrido <i class="fa-solid fa-arrow-down"></i>
-              </a>
-            </div>
           </div>
 
           <!-- Checklist Interactivo de Onboarding -->
@@ -234,9 +295,8 @@
     </section>
 
     <!-- 2. SECCIÓN 1: PAGO DE HABERES -->
-    <section id="haberes" class="scroll-mt-32">
+    <section id="haberes" class="scroll-mt-24 md:scroll-mt-32">
       <div class="rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden">
-        <!-- Cabecera de Sección -->
         <div
           class="bg-gg-oliveLight/70 px-4 sm:px-8 py-4 sm:py-5 border-b border-stone-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div class="flex items-center gap-3 sm:gap-3.5">
@@ -257,9 +317,7 @@
 
         <div class="p-4 sm:p-8 space-y-6 sm:space-y-8">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
-            <!-- Columna izquierda: Información clave -->
             <div class="lg:col-span-7 space-y-5 sm:space-y-6 min-w-0">
-              <!-- Tarjeta: ¿Cuándo y cómo cobrás tu sueldo? -->
               <div class="rounded-2xl bg-gg-cream border border-stone-200/80 p-4 sm:p-6 space-y-4">
                 <h3 class="text-base sm:text-lg font-bold text-gg-orange flex items-start sm:items-center gap-2.5">
                   <span
@@ -295,7 +353,6 @@
                 </p>
               </div>
 
-              <!-- Tarjeta: ¿Qué pasa si todavía no recibiste tu tarjeta? -->
               <div class="rounded-2xl bg-gg-orangeLight/60 border border-orange-200/80 p-4 sm:p-6 space-y-4">
                 <h3 class="text-base sm:text-lg font-bold text-gg-orange flex items-start sm:items-center gap-2.5">
                   <span
@@ -330,7 +387,7 @@
               </div>
             </div>
 
-            <!-- Columna derecha: Simulador Interactivo de Fecha de Tarjeta y Cobro -->
+            <!-- Columna derecha: Simulador Interactivo -->
             <div class="lg:col-span-5 min-w-0">
               <div
                 class="h-full rounded-2xl bg-gradient-to-b from-gg-oliveLight to-white border-2 border-gg-olive/40 p-4 sm:p-6 flex flex-col justify-between space-y-5">
@@ -353,7 +410,6 @@
                       class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border border-stone-300 bg-white text-gg-dark text-sm sm:text-base font-medium focus:outline-none focus:ring-2 focus:ring-gg-olive focus:border-gg-olive" />
                   </div>
 
-                  <!-- Resultado dinámico del simulador -->
                   <div id="simulador-resultado" class="space-y-3 pt-1">
                     <div class="p-3.5 sm:p-4 rounded-xl bg-white border border-stone-200 shadow-sm space-y-1.5">
                       <div class="flex items-center justify-between gap-2">
@@ -400,7 +456,7 @@
     </section>
 
     <!-- 3. SECCIÓN 2: AUSENCIAS Y LICENCIAS -->
-    <section id="ausencias" class="scroll-mt-32">
+    <section id="ausencias" class="scroll-mt-24 md:scroll-mt-32">
       <div class="rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden">
         <div
           class="bg-gg-orangeLight/70 px-4 sm:px-8 py-4 sm:py-5 border-b border-stone-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
@@ -431,7 +487,6 @@
             </p>
           </div>
 
-          <!-- Selector interactivo de motivo de ausencia -->
           <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
             <button type="button" id="btn-motivo-enfermedad" onclick="selectAusencia('enfermedad')"
               class="w-full sm:w-auto justify-center px-5 py-3.5 sm:py-3 rounded-2xl font-semibold text-sm flex items-center gap-2.5 bg-gg-olive text-white shadow-sm transition-all cursor-pointer">
@@ -443,12 +498,9 @@
             </button>
           </div>
 
-          <!-- Contenido dinámico del flujo paso a paso -->
           <div id="ausencia-flow-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 pt-1">
-            <!-- Renderizado por JS -->
           </div>
 
-          <!-- Recordatorio destacado -->
           <div class="rounded-2xl bg-gg-cream border-l-4 border-gg-orange p-4 sm:p-5 flex items-start gap-3">
             <div
               class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gg-orangeLight text-gg-orangeDark flex items-center justify-center shrink-0 mt-0.5">
@@ -469,7 +521,7 @@
     <!-- 4. SECCIÓN 3: OBRA SOCIAL + SECCIÓN 4: NORMAS DE TRABAJO -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
       <!-- Obra Social (5 cols) -->
-      <section id="obra-social" class="lg:col-span-5 scroll-mt-32 flex flex-col min-w-0">
+      <section id="obra-social" class="lg:col-span-5 scroll-mt-24 md:scroll-mt-32 flex flex-col min-w-0">
         <div
           class="flex-1 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden flex flex-col">
           <div
@@ -532,7 +584,7 @@
       </section>
 
       <!-- Normas y Recomendaciones (7 cols) -->
-      <section id="normas" class="lg:col-span-7 scroll-mt-32 flex flex-col min-w-0">
+      <section id="normas" class="lg:col-span-7 scroll-mt-24 md:scroll-mt-32 flex flex-col min-w-0">
         <div
           class="flex-1 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden flex flex-col">
           <div
@@ -561,7 +613,6 @@
             </p>
 
             <div class="space-y-3" id="normas-checklist">
-              <!-- Norma 1 -->
               <div role="checkbox" aria-checked="false" tabindex="0" data-norma-idx="0"
                 class="norma-card flex items-start gap-3 sm:gap-3.5 p-3.5 sm:p-4 rounded-2xl border border-stone-200 bg-gg-cream hover:border-gg-olive cursor-pointer transition-all select-none">
                 <span
@@ -580,7 +631,6 @@
                 </div>
               </div>
 
-              <!-- Norma 2 -->
               <div role="checkbox" aria-checked="false" tabindex="0" data-norma-idx="1"
                 class="norma-card flex items-start gap-3 sm:gap-3.5 p-3.5 sm:p-4 rounded-2xl border border-stone-200 bg-gg-cream hover:border-gg-olive cursor-pointer transition-all select-none">
                 <span
@@ -600,7 +650,6 @@
                 </div>
               </div>
 
-              <!-- Norma 3 -->
               <div role="checkbox" aria-checked="false" tabindex="0" data-norma-idx="2"
                 class="norma-card flex items-start gap-3 sm:gap-3.5 p-3.5 sm:p-4 rounded-2xl border border-stone-200 bg-gg-cream hover:border-gg-olive cursor-pointer transition-all select-none">
                 <span
@@ -631,7 +680,7 @@
     </div>
 
     <!-- 5. SECCIÓN 5: APP GESTIÓN VIRTUAL -->
-    <section id="app-virtual" class="scroll-mt-32">
+    <section id="app-virtual" class="scroll-mt-24 md:scroll-mt-32">
       <div class="rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden">
         <div
           class="bg-gg-oliveLight/70 px-4 sm:px-8 py-4 sm:py-5 border-b border-stone-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
@@ -653,7 +702,6 @@
 
         <div class="p-4 sm:p-8 lg:p-10">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-            <!-- Columna izquierda: Guía de activación y funcionalidades -->
             <div class="lg:col-span-7 space-y-5 sm:space-y-6 min-w-0">
               <div>
                 <span
@@ -667,7 +715,6 @@
                 </p>
               </div>
 
-              <!-- Activación 48 hs -->
               <div class="rounded-2xl bg-gg-cream border border-stone-200/90 p-4 sm:p-5 space-y-3">
                 <h4 class="font-bold text-gg-orange flex items-center gap-2 text-sm sm:text-base">
                   <i class="fa-solid fa-clock"></i> ¿Cuándo podés comenzar a utilizarla?
@@ -690,7 +737,6 @@
                 </ul>
               </div>
 
-              <!-- Lista de funcionalidades -->
               <div class="space-y-3">
                 <h4 class="font-bold text-gg-dark text-sm sm:text-base">¿Qué podés hacer desde la App?</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
@@ -713,7 +759,6 @@
                 </div>
               </div>
 
-              <!-- Aviso Importante: Firma mensual de recibos -->
               <div
                 class="rounded-2xl bg-amber-50 border-2 border-gg-orange p-4 sm:p-5 flex items-start gap-3.5 sm:gap-4">
                 <div
@@ -729,7 +774,6 @@
                 </div>
               </div>
 
-              <!-- Botón de Descarga Oficial -->
               <div class="pt-1">
                 <a href="https://docs.grupo-gestion.com.ar/docs/DESCARGALAAPPGV_interactivo.pdf" target="_blank"
                   rel="noopener noreferrer"
@@ -741,17 +785,14 @@
               </div>
             </div>
 
-            <!-- Columna derecha: Mockup Interactivo del Teléfono -->
             <div class="lg:col-span-5 flex flex-col items-center min-w-0">
               <p class="text-xs font-semibold uppercase tracking-wider text-stone-400 mb-3 flex items-center gap-1.5">
                 <i class="fa-solid fa-hand-pointer text-gg-orange"></i> Probá la vista previa interactiva
               </p>
 
-              <!-- Carcasa del Celular Responsive -->
               <div
                 class="w-full max-w-[295px] sm:max-w-[310px] rounded-[2.25rem] sm:rounded-[2.5rem] bg-stone-900 p-2.5 sm:p-3 shadow-phone border-4 border-stone-800">
                 <div class="bg-stone-50 rounded-[1.85rem] sm:rounded-[2rem] overflow-hidden flex flex-col">
-                  <!-- Notch / Barra superior -->
                   <div class="bg-gg-olive px-4 sm:px-5 pt-3.5 sm:pt-4 pb-5 text-white">
                     <div class="flex items-center justify-between text-[10px] opacity-85 mb-3">
                       <span>9:41</span>
@@ -772,7 +813,6 @@
                     </div>
                   </div>
 
-                  <!-- Tarjeta flotante ¿Cuándo cobro? -->
                   <div class="px-3.5 sm:px-4 -mt-3">
                     <div class="bg-white rounded-2xl p-3 sm:p-3.5 shadow-sm border border-stone-200/80 text-center">
                       <span class="text-[11px] font-bold uppercase tracking-wider text-gg-oliveDark">¿Cuándo
@@ -785,7 +825,6 @@
                     </div>
                   </div>
 
-                  <!-- Grid de iconos interactivos de la App -->
                   <div class="p-3.5 sm:p-4 space-y-3">
                     <div class="grid grid-cols-3 gap-2 text-center">
                       <button type="button" onclick="previewAppTab('consultas')"
@@ -834,7 +873,6 @@
                       </button>
                     </div>
 
-                    <!-- Visor dinámico dentro del celular -->
                     <div id="app-phone-screen"
                       class="p-3 rounded-xl bg-white border border-stone-200 text-xs text-stone-600 min-h-[76px] flex flex-col justify-center">
                       <p class="font-bold text-gg-dark mb-0.5"><i
@@ -844,7 +882,6 @@
                     </div>
                   </div>
 
-                  <!-- Barra inferior del teléfono -->
                   <div
                     class="bg-white border-t border-stone-200 px-4 sm:px-6 py-2.5 flex justify-between text-[10px] text-stone-400">
                     <span class="text-gg-oliveDark font-bold"><i class="fa-solid fa-bars mr-1"></i>Menú</span>
@@ -860,8 +897,7 @@
     </section>
 
     <!-- 6. SECCIÓN 6: ¿NECESITÁS AYUDA? + QUIZ DE VERIFICACIÓN -->
-    <section id="ayuda" class="scroll-mt-32 space-y-6 sm:space-y-8">
-      <!-- Canales de Contacto -->
+    <section id="ayuda" class="scroll-mt-24 md:scroll-mt-32 space-y-6 sm:space-y-8">
       <div class="rounded-2xl sm:rounded-3xl bg-white border border-stone-200/80 shadow-soft overflow-hidden">
         <div
           class="bg-gg-orangeLight/70 px-4 sm:px-8 py-4 sm:py-5 border-b border-stone-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
@@ -890,7 +926,6 @@
           </p>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Canal 1: WhatsApp / Teléfono -->
             <div
               class="rounded-2xl bg-gg-cream border border-stone-200 p-4 sm:p-5 flex flex-col justify-between space-y-4">
               <div class="space-y-1.5">
@@ -914,7 +949,6 @@
               </div>
             </div>
 
-            <!-- Canal 2: Línea 0810 -->
             <div
               class="rounded-2xl bg-gg-cream border border-stone-200 p-4 sm:p-5 flex flex-col justify-between space-y-4">
               <div class="space-y-1.5">
@@ -938,7 +972,6 @@
               </div>
             </div>
 
-            <!-- Canal 3: App Gestión Virtual -->
             <div
               class="rounded-2xl bg-gg-oliveLight/60 border border-gg-olive/30 p-4 sm:p-5 flex flex-col justify-between space-y-4">
               <div class="space-y-1.5">
@@ -959,7 +992,6 @@
         </div>
       </div>
 
-      <!-- Quiz Interactivo de Verificación -->
       <div
         class="rounded-2xl sm:rounded-3xl bg-white border-2 border-gg-olive/40 shadow-soft p-4 sm:p-8 space-y-5 sm:space-y-6">
         <div
@@ -982,7 +1014,6 @@
         </div>
 
         <div id="quiz-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-          <!-- Preguntas generadas por JS -->
         </div>
 
         <div id="quiz-final-banner"
@@ -995,7 +1026,6 @@
 
   </main>
 
-  <!-- Pie de página Responsive -->
   <footer class="bg-white border-t border-stone-200 mt-12 sm:mt-16 py-6 sm:py-8">
     <div
       class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
@@ -1019,14 +1049,83 @@
 
   <!-- Lógica Interactiva en JavaScript -->
   <script>
+    // --- 0. MENÚ DE NAVEGACIÓN RESPONSIVE DIRECTO ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+    const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
+
+    function setMobileMenu(open) {
+      mobileMenuBtn.setAttribute('aria-expanded', String(open));
+      if (open) {
+        mobileNavDrawer.style.display = 'block';
+        mobileMenuIcon.classList.remove('fa-bars');
+        mobileMenuIcon.classList.add('fa-xmark');
+      } else {
+        mobileNavDrawer.style.display = 'none';
+        mobileMenuIcon.classList.remove('fa-xmark');
+        mobileMenuIcon.classList.add('fa-bars');
+      }
+    }
+
+    mobileMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+      setMobileMenu(!isOpen);
+    });
+
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => setMobileMenu(false));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('header')) {
+        setMobileMenu(false);
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) {
+        setMobileMenu(false);
+      }
+    });
+
+    const sectionIds = ['haberes', 'ausencias', 'obra-social', 'normas', 'app-virtual', 'ayuda'];
+    function highlightActiveNav() {
+      let currentId = 'haberes';
+      const offset = 150;
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - offset) {
+          currentId = id;
+        }
+      });
+
+      document.querySelectorAll('[data-nav-target]').forEach(link => {
+        const isCurrent = link.getAttribute('data-nav-target') === currentId;
+        if (isCurrent) {
+          link.classList.add('bg-gg-oliveLight', 'text-gg-oliveDark', 'font-bold');
+          link.classList.remove('text-stone-600', 'text-stone-700', 'bg-stone-50');
+        } else {
+          link.classList.remove('bg-gg-oliveLight', 'text-gg-oliveDark', 'font-bold');
+          if (link.classList.contains('mobile-nav-link')) {
+            link.classList.add('text-stone-700', 'bg-stone-50');
+          } else {
+            link.classList.add('text-stone-600');
+          }
+        }
+      });
+    }
+    window.addEventListener('scroll', highlightActiveNav, {passive: true});
+    highlightActiveNav();
+
     // --- 1. ESTADO DE PROGRESO DE MÓDULOS ---
     const modules = [
-      { id: 'haberes', title: '1. Pago de Haberes y Banco Santander' },
-      { id: 'ausencias', title: '2. Ausencias y Licencias' },
-      { id: 'obra-social', title: '3. Obra Social (UOM)' },
-      { id: 'normas', title: '4. Normas de Trabajo en Aladdin' },
-      { id: 'app-virtual', title: '5. App Gestión Virtual y Recibos' },
-      { id: 'ayuda', title: '6. Canales de Contacto y Ayuda' },
+      {id: 'haberes', title: '1. Pago de Haberes y Banco Santander'},
+      {id: 'ausencias', title: '2. Ausencias y Licencias'},
+      {id: 'obra-social', title: '3. Obra Social (UOM)'},
+      {id: 'normas', title: '4. Normas de Trabajo en Aladdin'},
+      {id: 'app-virtual', title: '5. App Gestión Virtual y Recibos'},
+      {id: 'ayuda', title: '6. Canales de Contacto y Ayuda'},
     ];
 
     const completedModules = new Set();
@@ -1057,7 +1156,6 @@
         `;
       }).join('');
 
-      // Vincular eventos directamente al checklist
       container.querySelectorAll('.checklist-row').forEach(row => {
         row.addEventListener('click', (e) => {
           if (e.target.closest('.checklist-link')) return;
@@ -1072,7 +1170,6 @@
         });
       });
 
-      // Actualizar botones de cada sección
       document.querySelectorAll('.module-toggle-btn').forEach(btn => {
         const modId = btn.getAttribute('data-module-btn');
         const isDone = completedModules.has(modId);
@@ -1095,7 +1192,6 @@
         }
       });
 
-      // Actualizar barra superior
       const count = completedModules.size;
       const total = modules.length;
       const pct = Math.round((count / total) * 100);
@@ -1122,7 +1218,6 @@
       renderChecklist();
     }
 
-    // Vincular eventos a todos los botones de módulo
     document.querySelectorAll('.module-toggle-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const modId = btn.getAttribute('data-module-btn');
@@ -1147,11 +1242,9 @@
       const [year, month, day] = dateInput.value.split('-').map(Number);
       const startDate = new Date(year, month - 1, day);
 
-      // +48 horas para App Gestión Virtual
       const appDate = new Date(startDate);
       appDate.setDate(appDate.getDate() + 2);
 
-      // +10 días aproximados para Tarjeta de Débito Santander
       const cardDate = new Date(startDate);
       cardDate.setDate(cardDate.getDate() + 10);
 
@@ -1478,7 +1571,6 @@
       }, 2600);
     }
 
-    // Inicializar checklist
     renderChecklist();
   </script>
 </body>
